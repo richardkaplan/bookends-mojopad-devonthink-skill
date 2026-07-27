@@ -128,15 +128,18 @@ references**; deep links are **`bookends://…` page links**. Drive Bookends thr
 MCP (`mcp__bookends-mcp__*`) — the MCP server bundled inside Bookends.app — **never**
 through screen automation.
 
-**Dependencies.**
-
-```
-pip install pyobjc-framework-Quartz    # so the validator can SEE a Bookends modal alert
-pip install pypdf                      # link-annotation audit of the rendered report PDF
-```
+**Dependencies — nothing to pre-install.** The only Python packages this skill uses
+are `pyobjc-framework-Quartz` (so a validator can SEE a Bookends modal alert) and
+`pypdf` (link-annotation audit of the rendered report PDF), and **they are installed
+automatically at runtime by the validator scripts themselves** the first time each one
+runs — there is no manual `pip install` step and none belongs in the install flow. Every
+other script in `scripts/` is standard-library only. Do not add a manual dependency step
+back into the install instructions.
 
 Plus **Google Chrome** (headless), used to render the finished HTML report to a
-link-preserving PDF.
+link-preserving PDF. Chrome is already present on essentially every Mac; if it is
+missing, the report still generates as HTML — only the link-preserving PDF render is
+skipped, and the run reports that plainly.
 
 **No PDF library is used to highlight or to find a page. There is no PyMuPDF /
 `fitz` dependency anywhere in this skill — do not reintroduce one.** The highlight,

@@ -73,10 +73,38 @@ import re
 import subprocess
 import sys
 
-try:
-    from pypdf import PdfReader
-except ImportError:                                    # checked at point of use
-    PdfReader = None
+
+def _ensure(import_name, pip_name):
+    """Import a third-party module, installing it at runtime if it is missing.
+
+    Keeps the skill install manual-step-free: no ``pip install`` is required ahead of
+    time. Tries a normal import first; if that fails, installs into the current
+    interpreter (--user, then --break-system-packages, then plain) and re-imports.
+    Returns the module, or None if it could not be made available."""
+    import importlib
+    try:
+        return importlib.import_module(import_name)
+    except ImportError:
+        pass
+    for _args in (
+        [sys.executable, "-m", "pip", "install", "--user", pip_name],
+        [sys.executable, "-m", "pip", "install", "--break-system-packages", pip_name],
+        [sys.executable, "-m", "pip", "install", pip_name],
+    ):
+        try:
+            subprocess.run(_args, check=True, capture_output=True)
+        except Exception:
+            continue
+        importlib.invalidate_caches()
+        try:
+            return importlib.import_module(import_name)
+        except ImportError:
+            continue
+    return None
+
+
+_pypdf = _ensure("pypdf", "pypdf")                     # auto-installs at runtime
+PdfReader = _pypdf.PdfReader if _pypdf else None       # None => checked at point of use
 
 ATT = os.path.expanduser("~/Documents/Bookends/Attachments")
 
@@ -224,8 +252,8 @@ def check_source(ref, threshold=0.5):
         fails.append("first attachment does not exist on disk: %s" % path)
         return fails
     if PdfReader is None:
-        return ["pypdf unavailable -- attachment provenance cannot be verified "
-                "(pip install pypdf)"]
+        return ["pypdf unavailable and could not be auto-installed -- attachment "
+                "provenance cannot be verified (check network/pip access)"]
 
     title_words = words(ref["title"])
     if not title_words:

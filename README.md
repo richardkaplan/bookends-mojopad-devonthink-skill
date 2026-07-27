@@ -61,102 +61,97 @@ paste straight into Word.
 
 ---
 
-## Requirements
+## Prerequisites
+
+Installing the plugin is trivial (see [Install](#install)) — it will always add cleanly.
+But the plugin only *installs* the skill; whether the skill can actually *run* depends on a
+few things being in place on your Mac. **Without the two REQUIRED items below, the skill
+installs but cannot produce a report.** None of these is a manual code/`pip` step — they are
+apps and connected tools.
 
 This is a **macOS + Bookends** tool. It is not portable to Windows, Linux, Zotero or
 Mendeley, and it is not a general-purpose literature search — the deep links are Bookends'
 own `bookends://` URL scheme.
 
-**Bookends 15.4.2 or later** — a paid Mac app from Sonny Software (~$60; the free demo is
-capped at 50 references). 15.4.2 is the version that introduced Bookends' built-in **MCP
-server**, which is how Claude drives Bookends. There is **nothing separate to install** — it
-ships inside Bookends. You just switch it on: **Bookends → Settings → Servers → MCP
-Server**. If you are on an older Bookends, upgrade first; the skill cannot work without it.
+**REQUIRED — Bookends 15.4.2 or later, with its built-in MCP server switched on.** Bookends
+is a paid Mac app from Sonny Software (~$60; the free demo is capped at 50 references).
+Version 15.4.2 introduced Bookends' built-in **MCP server**, which is how Claude drives
+Bookends *and* how every highlight and `bookends://` deep link is written and read back —
+there is deliberately **no separate PDF-highlighting tool or PDF library** involved. There is
+**nothing separate to install** for the MCP; it ships inside Bookends. You just switch it on:
+**Bookends → Settings → Servers → MCP Server**. If you are on an older Bookends, upgrade
+first; the skill cannot work without it.
 
-**Claude Cowork** (or Dispatch) — the agent mode of the Claude desktop app, which is where
-skills run.
+**REQUIRED — a literature-search MCP connected to Claude.** The skill discovers candidate
+papers and verifies their PMIDs/DOIs before handing them to Bookends to retrieve. A
+[Firecrawl](https://firecrawl.dev) MCP server (its research / paper-search tools) or a PubMed
+MCP server does the job. Bookends fetches the PDFs; the search tool finds the papers. Without
+one of these connected, source discovery will be thin to non-existent.
 
-**Python 3** with two small packages (`pyobjc-framework-Quartz`, `pypdf`). **You do not have
-to install these yourself** — Claude Cowork can do it for you as part of the install prompt
-below. They are only used by the pre-ship validators, to verify that every link in the
-finished report really resolves. **The highlighting itself needs no PDF library at all**:
-Bookends' own MCP finds the quoted sentence, writes the highlight, and hands back a deep
-link anchored to it. (There is deliberately **no PyMuPDF** dependency — do not add one.)
+**REQUIRED — Claude Cowork** (or Dispatch) — the agent mode of the Claude desktop app, which
+is where skills and plugins run.
 
-**Google Chrome** — almost certainly already on your Mac. It is used *headlessly* (no window
-opens, nothing is automated on screen) to render the finished HTML report into a PDF that
-keeps its hyperlinks clickable, including the `bookends://` ones.
+**Recommended (runtime, auto-handled) — Google Chrome.** Almost certainly already on your
+Mac. It is used *headlessly* (no window opens, nothing is automated on screen) to render the
+finished HTML report into a PDF that keeps its hyperlinks clickable, including the
+`bookends://` ones. If Chrome is absent the report still generates as HTML — only the
+link-preserving PDF render is skipped, and the run says so.
 
-**A literature-search tool connected to Claude** — the skill searches for candidate papers
-and verifies their PMIDs/DOIs before handing them to Bookends to retrieve. A
-[Firecrawl](https://firecrawl.dev) MCP server (its research/paper-search tools) or a PubMed
-MCP server does the job. Bookends fetches the PDFs; the search tool finds the papers.
-Without one of these connected, source discovery will be thin.
+**Nothing to `pip install`.** The skill's pre-ship link validators use two small Python
+packages (`pyobjc-framework-Quartz`, `pypdf`), but they **install those themselves at
+runtime the first time they run** — there is no manual dependency step, and none should be
+added. Every other script is standard-library only. (There is deliberately **no PyMuPDF /
+`fitz`** dependency — do not add one.)
 
 ---
 
 ## Install
 
 **If you already have Bookends 15.4.2+ and Claude Cowork, you are essentially done.** There
-is no build step, no configuration file, no terminal to open. It is one pasted prompt — plus
-one toggle inside Bookends that only you can flip.
+is no build step, no configuration file, no Terminal to open, and **nothing to copy into a
+skills folder or `pip install` by hand.** This repo is a self-contained **Claude plugin
+marketplace**, so Cowork installs it the way it installs any plugin: give it the repo URL and
+ask.
 
 ### Step 1 — turn on Bookends' MCP server (the one thing Claude can't do for you)
 
 In Bookends: **Settings → Servers → MCP Server**, and switch it on. Bookends will offer to
 configure your AI assistant for you (it can auto-configure Claude Desktop, Codex, Cursor and
 LM Studio) — accept that. This lives inside Bookends' own preferences, so it's a click you
-have to make yourself. It takes about ten seconds.
+have to make yourself. It takes about ten seconds. (See [Prerequisites](#prerequisites) for
+the literature-search MCP you'll also want connected.)
 
-### Step 2 — paste this into Claude Cowork
+### Step 2 — install the plugin in Claude Cowork
 
-Claude will fetch the skill, install it, install any Python packages it needs, and check
-that Bookends is actually answering:
+Paste this into Claude Cowork:
 
 ```
-Please install the Bookends Research Skill for me from this public repo:
+Install the Bookends Research Skill from this plugin marketplace:
 https://github.com/richardkaplan/bookends-research-skill
 
-Do all of this for me:
-
-1. Clone (or download) the repo and copy its contents — SKILL.md, references/,
-   scripts/ and .claude-plugin/ — into a new folder at
-   ~/.claude/skills/bookends-research-skill/
-   so that ~/.claude/skills/bookends-research-skill/SKILL.md exists.
-
-2. Install the Python dependencies the skill needs:
-   python3 -m pip install --user pyobjc-framework-Quartz pypdf
-   If pip isn't available, sort it out or tell me plainly what I need to do.
-
-3. Check that Google Chrome is installed (the skill uses it headlessly to render the
-   report PDF) and tell me if it isn't.
-
-4. Verify that Bookends is running and that its MCP server is reachable — list my
-   Bookends libraries and groups as a test. If it isn't reachable, tell me exactly what
-   to switch on in Bookends → Settings → Servers → MCP Server.
-
-5. Confirm what you installed, and show me how to invoke the skill.
+Add it as a plugin marketplace and install the bookends-research-skill plugin from it.
+Then verify Bookends is reachable — list my Bookends libraries and groups as a test —
+and show me how to invoke the skill.
 ```
 
-Restart Claude when it's done, and the skill loads. It appears as
-**bookends-research-skill**.
+Cowork adds the marketplace and installs the plugin. There is **no** copying into
+`~/.claude/skills`, **no** `pip install`, and **no** Terminal step — the pre-ship validators
+install their own Python packages the first time they run.
 
-### If you'd rather do it by hand
+### Or drive it with the plugin commands
 
-```bash
-git clone https://github.com/richardkaplan/bookends-research-skill.git
-mkdir -p ~/.claude/skills
-cp -R bookends-research-skill ~/.claude/skills/bookends-research-skill
+If you'd rather do it from Claude's built-in plugin commands:
 
-python3 -m pip install --user pyobjc-framework-Quartz pypdf
+```
+/plugin marketplace add richardkaplan/bookends-research-skill
+/plugin install bookends-research-skill@bookends-research
 ```
 
-`~/.claude/skills/` is your personal skills library: any folder in there with a `SKILL.md`
-at its root is available in every Claude session on your Mac. Restart Claude and it loads.
-
-The repo is also a self-contained Claude **plugin** (`.claude-plugin/plugin.json`), so if
-you prefer to manage skills through **Claude → Settings → Capabilities**, you can install it
-that way instead. Either route works; the folder above is the simplest.
+`marketplace add` accepts the `owner/repo` shorthand shown above, or the full
+`https://github.com/richardkaplan/bookends-research-skill` URL. The marketplace registers
+under the name **bookends-research**; the plugin inside it is **bookends-research-skill** —
+which is why the install line reads `bookends-research-skill@bookends-research`. Restart
+Claude when it's done and the skill loads; it appears as **bookends-research-skill**.
 
 ---
 
@@ -394,17 +389,32 @@ with confidential material, point `RESEARCH_DIR` somewhere local instead.
 
 ## Files
 
+This repo is a single-plugin **marketplace**: a marketplace manifest at the root points to
+one plugin, and that plugin contains the skill.
+
 ```
-bookends-research-skill/
-├── SKILL.md                     # the pipeline (topic = the only variable)
-├── README.md
-├── .claude-plugin/plugin.json   # plugin manifest
-├── references/bookends.md       # Bookends calls, bookends:// link forms, Vancouver style
-├── scripts/
-│   ├── validate_bookends_links.py    # pre-ship gate: every bookends:// link must resolve
-│   ├── validate_bookends_attachment.py  # pre-ship gate: the right PDF, first, and readable
-│   └── styled_links_to_clipboard.sh
-└── examples/screenshots/        # the images above
+bookends-research-skill/                        # the repo = a Claude plugin marketplace
+├── .claude-plugin/
+│   └── marketplace.json                        # marketplace manifest (lists the plugin)
+├── plugins/
+│   └── bookends-research-skill/                # the plugin
+│       ├── .claude-plugin/
+│       │   └── plugin.json                     # plugin manifest
+│       └── skills/
+│           └── bookends-research-skill/        # the skill
+│               ├── SKILL.md                    # the pipeline (topic = the only variable)
+│               ├── references/bookends.md      # Bookends calls, link forms, Vancouver style
+│               ├── scripts/
+│               │   ├── validate_bookends_links.py       # pre-ship gate: every link resolves
+│               │   ├── validate_bookends_attachment.py  # pre-ship gate: right PDF, readable
+│               │   ├── validate_duallink.py
+│               │   ├── validate_titles.py
+│               │   ├── publish_to_web_share.py
+│               │   └── styled_links_to_clipboard.sh
+│               └── LICENSE
+├── README.md                                   # this file (install + usage)
+├── LICENSE
+└── examples/screenshots/                       # the images above
 ```
 
 ## License

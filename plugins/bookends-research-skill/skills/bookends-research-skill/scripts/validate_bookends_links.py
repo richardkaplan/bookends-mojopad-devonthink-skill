@@ -118,6 +118,47 @@ import tempfile
 import time
 from urllib.parse import unquote
 
+
+def _ensure(import_name, pip_name):
+    """Import a third-party module, installing it at runtime if it is missing.
+
+    This keeps the skill install manual-step-free: no ``pip install`` is required
+    ahead of time. On first use the module is imported normally; if that fails it is
+    installed into the current interpreter (trying --user, then --break-system-packages,
+    then a plain install) and re-imported. Returns the module, or None if it could not
+    be made available."""
+    import importlib
+    try:
+        return importlib.import_module(import_name)
+    except ImportError:
+        pass
+    import subprocess as _sp
+    import sys as _sys
+    for _args in (
+        [_sys.executable, "-m", "pip", "install", "--user", pip_name],
+        [_sys.executable, "-m", "pip", "install", "--break-system-packages", pip_name],
+        [_sys.executable, "-m", "pip", "install", pip_name],
+    ):
+        try:
+            _sp.run(_args, check=True, capture_output=True)
+        except Exception:
+            continue
+        importlib.invalidate_caches()
+        try:
+            return importlib.import_module(import_name)
+        except ImportError:
+            continue
+    return None
+
+
+def _pdfreader():
+    """Return pypdf.PdfReader, auto-installing pypdf on first use. Raises ImportError
+    only if pypdf genuinely cannot be installed."""
+    _m = _ensure("pypdf", "pypdf")
+    if _m is None:
+        raise ImportError("pypdf could not be imported or installed")
+    return _m.PdfReader
+
 SELECTION = re.compile(r"bookends://sonnysoftware\.com/selection/([^/]+)/(\d+)[^\"'<>\s)]*")
 BARE = re.compile(r"bookends://sonnysoftware\.com/(\d+)")
 PDFL = re.compile(r"bookends://sonnysoftware\.com/pdf/([^/]+)/(\d+)/(\d+)/(\d+)")
@@ -204,9 +245,8 @@ end tell''' % ("%s", "%s", DELIM)
 
 def alert_windows():
     """Bookends windows that look like a modal alert rather than the library."""
-    try:
-        import Quartz
-    except ImportError:
+    Quartz = _ensure("Quartz", "pyobjc-framework-Quartz")
+    if Quartz is None:
         return None  # cannot observe -> caller treats as a hard failure
     wins = Quartz.CGWindowListCopyWindowInfo(0, Quartz.kCGNullWindowID) or []
     out = []
@@ -308,7 +348,7 @@ def _pdf_annot_uris(page):
 def links_in_pdf(path):
     """PDF link ANNOTATIONS — the only trustworthy read. grep/strings cannot see
     annotations stored in compressed object streams. Read with pypdf (no PyMuPDF)."""
-    from pypdf import PdfReader
+    PdfReader = _pdfreader()
     out = []
     for page in PdfReader(path).pages:
         for u in _pdf_annot_uris(page):
@@ -329,7 +369,7 @@ def links_in_dt(uuid):
 
 def page_count(path):
     try:
-        from pypdf import PdfReader
+        PdfReader = _pdfreader()
         return len(PdfReader(path).pages)
     except Exception:
         return None
@@ -551,7 +591,7 @@ def _page0_corroboration(rid, path, quotes):
     if not path or not os.path.exists(path):
         return None, "source PDF unreadable — page 0 cannot be corroborated"
     try:
-        from pypdf import PdfReader
+        PdfReader = _pdfreader()
     except ImportError:
         return None, "pypdf unavailable — page 0 cannot be corroborated"
     reader = PdfReader(path)

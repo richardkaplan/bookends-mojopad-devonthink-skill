@@ -1,0 +1,30 @@
+{
+  "name": "bookends-research",
+  "owner": {
+    "name": "Richard S. Kaplan, MD",
+    "email": "rkaplan@kaplanlifecareplan.com"
+  },
+  "description": "Single-plugin marketplace distributing the Bookends Research Skill: a Bookends-native, deep-linked, highlighted research report on any topic. Add this marketplace by its GitHub URL, then install the bookends-research-skill plugin.",
+  "plugins": [
+    {
+      "name": "bookends-research-skill",
+      "source": "./plugins/bookends-research-skill",
+      "description": "Produce a Bookends-native, deep-linked, highlighted research report on any topic. Creates a Bookends group with subtopic child groups plus a Reports folder, retrieves sources (guidelines, systematic reviews, key studies) Bookends-first, attaches full-text PDFs, writes one persistent highlight and page-accurate bookends:// deep link per source, and assembles ONE combined HTML report (highlighted deep-linked quotes, stance table, narrative synthesis, Vancouver references).",
+      "author": {
+        "name": "Richard S. Kaplan, MD",
+        "email": "rkaplan@kaplanlifecareplan.com"
+      },
+      "category": "productivity",
+      "keywords": [
+        "bookends",
+        "research",
+        "deep-link",
+        "highlight",
+        "vancouver",
+        "literature-review",
+        "evidence-synthesis",
+        "medical-legal"
+      ]
+    }
+  ]
+}
