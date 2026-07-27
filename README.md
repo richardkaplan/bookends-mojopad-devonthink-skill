@@ -107,44 +107,45 @@ no PyMuPDF / `fitz` / `pymupdf` dependency anywhere in this skill — do not add
 
 ---
 
-## Permissions & connectors — what's needed, and what isn't
+## Permissions & connectors — what the skill uses
 
-The skill operates through MCP connectors, not screen automation. To be explicit:
+The skill actively drives Bookends — you'll see Bookends open and operate while it runs — and
+it uses a few different macOS mechanisms to do that, each gated by a different permission. **For
+full-fidelity results, grant them all.** Without them the skill can sometimes work around the
+gaps, but the results are inferior. (For a long, multi-step skill like this, **Dispatch** is
+the smoother environment than Cowork.)
 
-**Needed:**
+**Connectors:**
 
-- The **Bookends MCP** (built into Bookends 15.4.2+, switched on above). The skill drives
-  Bookends entirely through it — creating groups, retrieving and attaching PDFs, writing
-  highlights, reading back deep links, and filing the report — and it runs its one shell step
-  (the headless-Chrome PDF render) through this same MCP, not a general "Control your Mac"
-  connector.
+- The **Bookends MCP** (built into Bookends 15.4.2+, switched on above) — the main channel for
+  the skill's work: creating groups, retrieving and attaching PDFs, writing highlights, reading
+  back deep links, and filing the report.
 - A **Firecrawl** (or PubMed) **MCP** for finding candidate papers.
-- **Write access to the folder where the on-disk HTML copy is saved** (default: an iCloud
-  `Research` folder set by `RESEARCH_DIR`). The skill writes this through the Bookends MCP
-  rather than a mounted host folder, so a separate "Filesystem" connector generally isn't
-  required; repoint `RESEARCH_DIR`, or the disk copy simply isn't written — the Bookends copy
-  is unaffected either way.
+- The **"Control your Mac"** connector and **Filesystem** access — recommended. The skill
+  observes the Bookends window to verify links, and writes the report's on-disk HTML copy
+  (default: an iCloud `Research` folder set by `RESEARCH_DIR`). Grant these for the full
+  experience.
 
-**Not needed:**
+**macOS permissions, and what each is for:**
 
-- **"Control your Mac" / computer-use, and mouse or keyboard control.** The skill never types
-  into apps or drives the pointer; it operates Bookends through Bookends' own MCP.
+- **Automation** — most of the work is **app-level automation** through AppleScript / Apple
+  Events (`tell application "Bookends" …`) and the Bookends MCP. This makes Bookends act (and
+  come to the front — which is what you see it doing), but it is app-to-app scripting, not
+  simulated mouse/keyboard.
+- **Accessibility (keyboard/mouse)** — the skill finishes delivering the styled `bookends://`
+  link list into the report's Notes field with a **UI-scripting** step (macOS **System
+  Events**: click the field and send a paste keystroke). That is simulated input, and it is
+  what triggers the mouse/keyboard access prompt. Grant it and the links land as clickable text
+  automatically; decline it and you paste that one list in yourself with ⌘V.
+- **Screen Recording** — a group deep link (`bookends://…/group/…`) cannot be confirmed through
+  AppleScript (Bookends exposes no "currently-displayed group" property), so the skill verifies
+  it by **looking at the Bookends window** (a screenshot) and reading back the displayed group
+  and reference count. A read-only observation, used only to prove the report's links resolve.
 
-**One read-only exception — screen observation for group-link verification.** There is a
-single place the skill reads the screen. A group deep link (`bookends://…/group/…`) cannot be
-confirmed through AppleScript — Bookends exposes no "currently-displayed group" property — so
-the skill verifies that such a link actually opened the right group by **looking at the
-Bookends window** (a screenshot) and reading back the displayed group and reference count.
-This is a read-only observation of Bookends' own window, used only to prove the report's links
-resolve; it is **not** input control. On macOS that observation is what **Screen Recording**
-permission covers.
-
-**Optional (full Claude Code plugin install only):** the bundled pre-ship QA validator
-scripts, if present, confirm links via Bookends **AppleScript Automation** (System Settings →
-Privacy & Security → **Automation**) and read the window list to catch a Bookends error
-dialog — app-to-app scripting, not keyboard/mouse control. They are optional: without them the
-skill downgrades those checks to inline MCP reads. In Cowork / Dispatch (which install the
-SKILL.md only) they do not run.
+**Optional (full Claude Code plugin install only):** the bundled pre-ship QA validator scripts,
+if present, add extra link checks via Bookends **AppleScript Automation** and a window read;
+without them the skill downgrades those checks to inline MCP reads. In Cowork / Dispatch (which
+install the SKILL.md only) they do not run.
 
 ---
 
