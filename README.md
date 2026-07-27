@@ -171,6 +171,50 @@ step.
 
 ---
 
+## Firecrawl API key
+
+Source discovery runs through the **Firecrawl MCP server**, and that server reads its key
+from the **`FIRECRAWL_API_KEY`** environment variable. The important thing to know: **the key
+belongs to the Firecrawl connector, not to Bookends and not to this skill's scripts.** So it
+does not matter whether Bookends' MCP sees your shell environment — the key has to be set
+where the *Firecrawl* server can read it.
+
+**A paid Firecrawl account is recommended.** The free tier works, but its rate limits can
+throttle a multi-paper run; a paid plan raises those limits and makes larger reports smoother.
+Get a key at [firecrawl.dev](https://firecrawl.dev).
+
+**The easy way — one command.** From the repo (Claude Code install) or anywhere you have the
+helper:
+
+```
+bash scripts/set-firecrawl-key.sh
+```
+
+It prompts for your key (input hidden), stores it privately at
+`~/.config/bookends-research/firecrawl.env` (permissions `600`, never committed), and then
+prints the exact snippet to paste into your Firecrawl MCP config. There's also a committed
+[`.env.example`](.env.example) template if you'd rather copy it to `.env` and fill it in by
+hand.
+
+**Where to actually put the key, by environment:**
+
+- **Claude Code** — register (or re-register) the Firecrawl server with the key in its env:
+
+  ```
+  claude mcp add firecrawl --env FIRECRAWL_API_KEY=fc-your-key -- npx -y firecrawl-mcp
+  ```
+
+  or add `"env": { "FIRECRAWL_API_KEY": "fc-your-key" }` to the firecrawl entry in your
+  `.mcp.json`.
+- **Cowork / Claude Desktop / Dispatch** — open the **Firecrawl connector's settings** and
+  paste the key into its API-key / `FIRECRAWL_API_KEY` field, then reconnect. These read the
+  connector configuration, so this is the one place the key needs to go.
+
+Once the Firecrawl server has the key, nothing else changes — the skill calls Firecrawl
+exactly the same way in all three environments.
+
+---
+
 ## Using it — worked examples
 
 You invoke the skill by asking for it in plain English. The topic is the only thing you
@@ -428,6 +472,9 @@ bookends-research-skill/                        # the repo = a Claude plugin mar
 │               │   ├── publish_to_web_share.py
 │               │   └── styled_links_to_clipboard.sh
 │               └── LICENSE
+├── scripts/
+│   └── set-firecrawl-key.sh                    # one-step Firecrawl API-key setup helper
+├── .env.example                                # env template (FIRECRAWL_API_KEY)
 ├── README.md                                   # this file (install + usage)
 ├── LICENSE
 └── examples/screenshots/                       # the images above
