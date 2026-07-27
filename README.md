@@ -97,23 +97,25 @@ finished HTML report into a PDF that keeps its hyperlinks clickable, including t
 `bookends://` ones. If Chrome is absent the report still generates as HTML — only the
 link-preserving PDF render is skipped, and the run says so.
 
-**Nothing to `pip install`.** The skill's pre-ship link validators use two small Python
-packages (`pyobjc-framework-Quartz`, `pypdf`), but they **install those themselves at
-runtime the first time they run** — there is no manual dependency step, and none should be
-added. Every other script is standard-library only. (There is deliberately **no PyMuPDF /
-`fitz`** dependency — do not add one.)
+**Nothing to `pip install`; PyMuPDF is NOT required.** The core flow needs no Python package
+at all — highlighting and page-finding go through the Bookends MCP
+(`bookends_annotate_pdf` + `bookends_get_pdf_content`), not a PDF library. Two *optional*
+pre-ship validators use `pyobjc-framework-Quartz` and `pypdf`, and they **install those
+themselves at runtime** the first time they run — there is no manual dependency step, and
+none should be added. Every other script is standard-library only. **There is deliberately
+no PyMuPDF / `fitz` / `pymupdf` dependency anywhere in this skill — do not add one.**
 
 ---
 
 ## Install
 
-**If you already have Bookends 15.4.2+ and Claude Cowork, you are essentially done.** There
-is no build step, no configuration file, no Terminal to open, and **nothing to copy into a
-skills folder or `pip install` by hand.** This repo is a self-contained **Claude plugin
-marketplace**, so Cowork installs it the way it installs any plugin: give it the repo URL and
-ask.
+There is no build step, no configuration file, and **nothing to copy into a skills folder or
+`pip install` by hand.** How you install differs slightly by environment, because the
+`/plugin marketplace` command exists **only in Claude Code**. In **Cowork** and **Dispatch**
+you install by giving Claude the repo URL and asking it to install the skill. Do Step 1
+first in every case.
 
-### Step 1 — turn on Bookends' MCP server (the one thing Claude can't do for you)
+### Step 1 (all environments) — turn on Bookends' MCP server (the one thing Claude can't do for you)
 
 In Bookends: **Settings → Servers → MCP Server**, and switch it on. Bookends will offer to
 configure your AI assistant for you (it can auto-configure Claude Desktop, Codex, Cursor and
@@ -121,37 +123,51 @@ LM Studio) — accept that. This lives inside Bookends' own preferences, so it's
 have to make yourself. It takes about ten seconds. (See [Prerequisites](#prerequisites) for
 the literature-search MCP you'll also want connected.)
 
-### Step 2 — install the plugin in Claude Cowork
+### Step 2 — install the skill (pick your environment)
 
-Paste this into Claude Cowork:
+#### Claude Code — full plugin (scripts included)
 
-```
-Install the Bookends Research Skill from this plugin marketplace:
-https://github.com/richardkaplan/bookends-research-skill
-
-Add it as a plugin marketplace and install the bookends-research-skill plugin from it.
-Then verify Bookends is reachable — list my Bookends libraries and groups as a test —
-and show me how to invoke the skill.
-```
-
-Cowork adds the marketplace and installs the plugin. There is **no** copying into
-`~/.claude/skills`, **no** `pip install`, and **no** Terminal step — the pre-ship validators
-install their own Python packages the first time they run.
-
-### Or drive it with the plugin commands
-
-If you'd rather do it from Claude's built-in plugin commands:
+Claude Code has the plugin-marketplace commands. This installs the **whole** plugin — SKILL.md
+plus the optional QA scripts and reference doc. Run:
 
 ```
 /plugin marketplace add richardkaplan/bookends-research-skill
 /plugin install bookends-research-skill@bookends-research
 ```
 
-`marketplace add` accepts the `owner/repo` shorthand shown above, or the full
-`https://github.com/richardkaplan/bookends-research-skill` URL. The marketplace registers
-under the name **bookends-research**; the plugin inside it is **bookends-research-skill** —
-which is why the install line reads `bookends-research-skill@bookends-research`. Restart
-Claude when it's done and the skill loads; it appears as **bookends-research-skill**.
+Two names are involved, and they are **different**: `marketplace add` registers a
+**marketplace** named `bookends-research` (that name comes from the repo's `marketplace.json`,
+not the repo name), and inside it is a **plugin** named `bookends-research-skill`. That is why
+the install target is `bookends-research-skill@bookends-research`. `marketplace add` also
+accepts the full URL (`https://github.com/richardkaplan/bookends-research-skill`) instead of
+the `owner/repo` shorthand. Once the marketplace is added, the shorter
+`/plugin install bookends-research-skill` works too, since the plugin name is unambiguous.
+Restart Claude Code and the skill loads as **bookends-research-skill**.
+
+#### Cowork / Dispatch — install from the repo URL
+
+Cowork and Dispatch do **not** have the `/plugin marketplace` command — that is a Claude Code
+feature. Install by pasting this:
+
+```
+Install the Bookends Research Skill from this public repo:
+https://github.com/richardkaplan/bookends-research-skill
+
+Fetch the repo and save its skill — the SKILL.md at
+plugins/bookends-research-skill/skills/bookends-research-skill/SKILL.md — as an installed skill.
+Then verify Bookends is reachable — list my Bookends libraries and groups as a test —
+and show me how to invoke the skill.
+```
+
+Cowork / Dispatch fetch the repo and save the skill. **This saves the SKILL.md text only** —
+the optional validator scripts and the reference doc do **not** travel with a save-skill
+install, and the skill is built to run fine without them: its core work (search → attach →
+highlight → deep-link → report) goes entirely through the Bookends MCP. (See *Runtime
+requirements & portability* in SKILL.md.) If you want the full bundle including the QA
+scripts, install it in **Claude Code** instead.
+
+No environment needs a manual copy into `~/.claude/skills`, a `pip install`, or a Terminal
+step.
 
 ---
 
