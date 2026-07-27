@@ -107,6 +107,47 @@ no PyMuPDF / `fitz` / `pymupdf` dependency anywhere in this skill — do not add
 
 ---
 
+## Permissions & connectors — what's needed, and what isn't
+
+The skill operates through MCP connectors, not screen automation. To be explicit:
+
+**Needed:**
+
+- The **Bookends MCP** (built into Bookends 15.4.2+, switched on above). The skill drives
+  Bookends entirely through it — creating groups, retrieving and attaching PDFs, writing
+  highlights, reading back deep links, and filing the report — and it runs its one shell step
+  (the headless-Chrome PDF render) through this same MCP, not a general "Control your Mac"
+  connector.
+- A **Firecrawl** (or PubMed) **MCP** for finding candidate papers.
+- **Write access to the folder where the on-disk HTML copy is saved** (default: an iCloud
+  `Research` folder set by `RESEARCH_DIR`). The skill writes this through the Bookends MCP
+  rather than a mounted host folder, so a separate "Filesystem" connector generally isn't
+  required; repoint `RESEARCH_DIR`, or the disk copy simply isn't written — the Bookends copy
+  is unaffected either way.
+
+**Not needed:**
+
+- **"Control your Mac" / computer-use, and mouse or keyboard control.** The skill never types
+  into apps or drives the pointer; it operates Bookends through Bookends' own MCP.
+
+**One read-only exception — screen observation for group-link verification.** There is a
+single place the skill reads the screen. A group deep link (`bookends://…/group/…`) cannot be
+confirmed through AppleScript — Bookends exposes no "currently-displayed group" property — so
+the skill verifies that such a link actually opened the right group by **looking at the
+Bookends window** (a screenshot) and reading back the displayed group and reference count.
+This is a read-only observation of Bookends' own window, used only to prove the report's links
+resolve; it is **not** input control. On macOS that observation is what **Screen Recording**
+permission covers.
+
+**Optional (full Claude Code plugin install only):** the bundled pre-ship QA validator
+scripts, if present, confirm links via Bookends **AppleScript Automation** (System Settings →
+Privacy & Security → **Automation**) and read the window list to catch a Bookends error
+dialog — app-to-app scripting, not keyboard/mouse control. They are optional: without them the
+skill downgrades those checks to inline MCP reads. In Cowork / Dispatch (which install the
+SKILL.md only) they do not run.
+
+---
+
 ## Install
 
 There is no build step, no configuration file, and **nothing to copy into a skills folder or
