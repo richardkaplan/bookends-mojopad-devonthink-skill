@@ -989,6 +989,16 @@ citation is correct (per *Standing rules*).
       (`https://doi.org/…`, PubMed / PMC) **AND** (b) at least one `bookends://…` link. If
       either class is missing or flattened, **STOP: do NOT ship a link-less report** — treat
       the run as FAILED and regenerate the HTML/PDF until the check passes.
+    - **MANDATORY ENCODING gate - REQUIRED; the run FAILS otherwise (R-BOOKENDS-ENCODING-ASCII-01).**
+      Run `python3 scripts/validate_encoding.py <report.html>`. It FAILS the run on any UTF-8 mojibake
+      marker (`Ã`, `â€`, `,ââ`, ...), on a missing `<meta charset="utf-8">`, or on any literal
+      unsubstituted format token (e.g. a stray `%s`). The generator MUST emit special / typographic
+      glyphs as NUMERIC HTML ENTITIES - `&#8776;` (≈), `&ndash;` (–), `&mdash;` (—), `&times;` (×),
+      `&ge;`/`&le;` (≥/≤), and accented author names and smart quotes as entities too - ALWAYS include
+      `<meta charset="utf-8">`, and substitute every format token (never leave a literal `%s`). Simplest
+      robust implementation: assemble the HTML, then fold every non-ASCII codepoint to a numeric entity
+      (`''.join(c if ord(c)<128 else '&#%d;'%ord(c) for c in html)`). Closes the 2026-08-04 mojibake +
+      `%s`-footer regression.
     - **MANDATORY link-validation gate — REQUIRED; the run FAILS otherwise.** Run
       `python3 scripts/validate_bookends_links.py <report.html>`; it scans BOTH the finished
       HTML and the attached PDF's link annotations and asserts ALL FOUR:
