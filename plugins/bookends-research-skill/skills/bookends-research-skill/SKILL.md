@@ -3,6 +3,100 @@ name: bookends-research-skill
 description: "Produce a Bookends-native, deep-linked, highlighted research report on any topic, parameterized so only the topic changes each run. Creates a Bookends group with subtopic child groups plus a Reports folder, retrieves sources (guidelines, systematic reviews, key studies) Bookends-first — via Bookends' search, identifier retrieval and PDF download, with candidate papers first enumerated by a ROUTINE Firecrawl Research / PubMed search per subtopic (verified PMIDs/DOIs), falling back to a Firecrawl fetch only when Bookends cannot attach — attaches full-text PDFs, writes one persistent highlight and page-accurate bookends:// deep link per source, and assembles ONE combined HTML report (highlighted deep-linked quotes, stance table, narrative synthesis, Vancouver references). Use whenever the user asks for a Bookends research report, deep-linked or highlighted literature review, evidence synthesis or annotated bibliography in Bookends, or says 'run the Bookends research skill' or 'bookends:// deep-linked quotes'. Depends on the Bookends MCP server that ships inside Bookends.app."
 ---
 
+## Life expectancy baseline (R-SSA-LIFE-EXPECTANCY-BASELINE-01)
+
+If this skill states, relies on, or rebuts a **life expectancy** — remaining
+years, projected age at death, or the horizon a cost projection runs to —
+**read `ssa-life-expectancy/SKILL.md` first.** It is authoritative for the
+baseline. The short version:
+
+- **SSA is always the starting, unadjusted baseline.** Not CDC/NCHS vital
+  statistics, not state vital statistics, not a commercial table. SSA is what
+  an opposing expert will most often cite; starting elsewhere invites an
+  argument about the baseline before anyone reaches the substance.
+- **COHORT basis, never period.** Cohort tables project future mortality
+  improvement across the remaining lifetime; period tables freeze today's
+  mortality and understate expectancy. Measured: a male in the 1958 cohort at
+  exact age 68.48 gets **16.7** additional years on cohort against **16.0** on
+  period.
+- **The longer figure is intentional — never "correct" it down.** A life care
+  plan projects decades of cost; costing a 40-year horizon against a table that
+  assumes medicine stops improving today is not conservative, it is wrong in
+  the direction that shortens every plan it touches.
+- **Always state basis AND vintage with the figure.** A number without them
+  cannot be reproduced or defended. Vintages track the annual Trustees Report;
+  **TR2025 does not exist** — the sequence steps TR2024 → TR2026.
+- **Never mix age bases.** Taking a total from a whole age (`68 + e(68)`) and
+  subtracting a fractional current age silently understates by ~0.1 years.
+  Compute both figures from the same exact fractional age.
+- Period tables and the Alt1/Alt3 low-high range stay available as **labelled**
+  non-defaults — useful when rebutting an expert who cites `table4c6`.
+
+## Wiki deliverables defer to `mojopad-wiki` (R-WIKI-DEFER-TO-MOJOPAD-SKILL-01)
+
+If the deliverable is (or becomes) a **MojoPad `.mojopad` wiki**, the
+`mojopad-wiki` skill is authoritative for everything about the container:
+
+- the required page skeleton, including **`Introduction and Scope`** (with a
+  real completion date) and **`References — Chronological`** (oldest first, last
+  page in the wiki);
+- the `bookends://` and `x-devonthink-item://` link forms, the dual
+  Group + Citation pair, and the ban on `/selection/` and bare-id links;
+- **what MojoPad's renderer actually preserves and silently drops** (§3a) —
+  markdown tables, callouts, explicit markdown links on custom schemes, and
+  **only** `color` + `background-color` on a span; all other raw HTML and every
+  other span style property vanish without warning, and only `https?://` /
+  `mojopad://` are autolinked. The status-**badge** convention
+  (R-WIKI-STATUS-BADGE-01) lives there too: never style a status value with
+  `color:` alone, or it reads as a hyperlink;
+- MojoPad's **URL-scheme handling** (§7) — a deny-list plus a per-scheme trust
+  prompt as of v1.43.3, **not** the old `https?:|mailto:|mojopad:` allow-list;
+- **observed-navigation verification of every distinct link — document AND
+  page** — before shipping;
+- the **required, populated `Academic Summary`** page on a research/evidence-review
+  wiki (`mojopad-wiki` §2b, R-WIKI-ACADEMIC-SUMMARY-01) and its enforcing gate
+  `scripts/validate_academic_summary.py`. The author-date **style** stays defined
+  here (R-BOOKENDS-NARRATIVE-CITE-STYLE-01); `mojopad-wiki` owns the wiki-level
+  requirement and the gate, and defers to this skill for the style;
+- delivery: build outside the DEVONthink database, iCloud copy, then
+  `import_file` + `move_record` + label 3 + `" (AI)"` suffix + verify.
+
+This skill keeps ownership of its own CONTENT rules. Read `mojopad-wiki/SKILL.md`
+before creating or editing any wiki, and use its de-identified template at
+`mojopad-wiki/templates/evidence-review/` as the starting skeleton. Case material
+never enters the repo.
+
+## DEVONthink delivery — build outside, then import (R-DT-BUILD-THEN-IMPORT-01)
+
+**Never create, write, rename, move or delete a file inside a DEVONthink
+database package.** A DEVONthink database is a package (`.dtBase2`,
+`.dtSparse`, `.dtArchive`), not a folder. Filesystem writes inside it corrupt
+the database, because DEVONthink's index never learns about the change.
+
+Whenever the destination is a DEVONthink group (a UUID or an
+`x-devonthink-item://` link), follow this order:
+
+1. **Build the artifact outside the database** — the session outputs folder,
+   `~/Downloads`, or a temp directory.
+2. **Import it through the connector** — `import_file` for a file on disk, or
+   `create_record` for content authored inline, targeting the destination
+   group UUID.
+3. **Set label 3** ("AI").
+4. **Name it with the `" (AI)"` suffix.**
+5. **Verify** with `get_record_properties` that the record exists in the
+   intended group before reporting success. Do not report success on the
+   strength of the import call returning.
+6. **Never trash anything.** Superseded originals move to a `Temp AI Files`
+   subgroup.
+
+Package-type artifacts (for example a `.mojopad` wiki) are directories, not
+single files. Importing one is not the same as importing a PDF — confirm after
+import that the resulting record opens.
+
+This rule is stated here because the DEVONthink connector's own instructions
+carry only the prohibition, never the positive procedure — and a task session
+spawned without that connector receives neither.
+
 # Bookends Research Skill
 
 This skill produces a deep-linked, highlighted Bookends research report, **parameterized
