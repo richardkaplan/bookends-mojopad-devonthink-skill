@@ -782,6 +782,8 @@ article's provenance **Firecrawl-fallback**. Reserve Firecrawl for this fallback
 for genuinely external-website research (it costs money and is less private than the native
 Bookends path).
 
+**B2. OPEN-ACCESS AGGREGATOR SWEEP — routine, before any abstract-card fallback (R-BOOKENDS-FULLTEXT-SOURCES-01).** Because this workstation has **no institutional / EZproxy access**, before giving up on a paper's full text run a sweep of **legitimate open-access aggregators**, trying each until one serves a real PDF: **(1) Unpaywall → (2) OpenAlex → (3) Europe PMC / PMC → (4) Semantic Scholar → (5) CORE → (6) DOAJ → (7) a matching preprint (arXiv / bioRxiv / medRxiv / SSRN)**. The helper `scripts/fetch_open_fulltext.py <DOI> [--json]` runs the sweep and prints the first working OA PDF URL; hand that URL to Bookends so the Mac downloads it — `mcp__bookends-mcp__bookends_add_pdf { items:[{ id, pdf_url: "<OA PDF URL>" }] }` — and mark provenance **open-access**. **Sci-Hub and any pirated / shadow-library mirror are NEVER used** (the helper blocks those domains). Unpaywall needs an email and CORE an API key; when either is unset that source is skipped and the sweep continues. Only after this sweep also comes up empty do you fall to the abstract-card last resort. Full source order and config: R-BOOKENDS-FULLTEXT-SOURCES-01.
+
 Whichever path an article comes through, its PDF ends up **attached to a Bookends
 reference** — that is the invariant the rest of the pipeline depends on.
 
@@ -799,7 +801,7 @@ each source:
   `mcp__bookends-mcp__bookends_add_pdf { items:[{ id, pdf_url }] }` — and only attach a
   locally-downloaded file (`{ id, path }`) when Bookends cannot fetch the URL. Verify with
   `mcp__bookends-mcp__bookends_get_attachment_paths`.
-- **LAST RESORT — no full text from Bookends OR a discovery fetch:** render the abstract to
+- **LAST RESORT — no full text from Bookends, a discovery fetch, OR the open-access sweep (R-BOOKENDS-FULLTEXT-SOURCES-01):** render the abstract to
   a one-page PDF yourself — write the citation + abstract as HTML and print it with headless
   Chrome (same converter as the report, see step 7) — attach that with
   `mcp__bookends-mcp__bookends_add_pdf`, and **flag it abstract-only** in the report (its
@@ -1334,6 +1336,49 @@ HTML comment). The key ones:
 shipped file, and run `scripts/validate_encoding.py` before delivery. The
 template ships with **zero** patient/case content; never commit a filled-in
 (PHI-bearing) copy back into the skill.
+
+## R-BOOKENDS-FULLTEXT-SOURCES-01 — routine legitimate open-access full-text sources
+
+This workstation has **no institutional or EZproxy access** and is used
+commercially, so legitimate **open-access aggregators are the realistic way to
+raise the full-text hit rate.** For every reference — after the Bookends-native
+download (step 2A) and any Firecrawl-fallback (step 2B) but **before** the
+abstract-card last resort — run the open-access sweep: try each source in order
+until one serves a real PDF, then hand that URL to Bookends
+(`mcp__bookends-mcp__bookends_add_pdf { items:[{ id, pdf_url }] }`) so the Mac
+performs the download and the PDF ends up attached to the reference.
+
+1. **Unpaywall** — `https://api.unpaywall.org/v2/{DOI}?email=...` → `best_oa_location` / `oa_locations[].url_for_pdf`.
+2. **OpenAlex** — `https://api.openalex.org/works/doi:{DOI}` → `best_oa_location` / `primary_location` / `locations[].pdf_url`.
+3. **Europe PMC / PMC** — Europe PMC `search?query=DOI:"{DOI}"&resultType=core` → the OA `fullTextUrlList` PDF, or the `PMCID` → `.../{PMCID}/fullTextPDF`.
+4. **Semantic Scholar** Graph API — `/graph/v1/paper/DOI:{DOI}?fields=openAccessPdf` → `openAccessPdf.url`.
+5. **CORE** — `https://api.core.ac.uk/v3` (needs an API key) → `downloadUrl`; skipped when no key is configured.
+6. **DOAJ** — `https://doaj.org/api/search/articles/doi:{DOI}` → an open-access journal PDF link.
+7. **Preprint servers** — a matching preprint on **arXiv / bioRxiv / medRxiv / SSRN** when one exists.
+8. **Existing routes stay in play:** Bookends' own `download pdfs` / `bookends_add_pdf { items:[{ id }] }` (its supported routes, Unpaywall-backed), DEVONthink `download_pdf_from_doi`, and any direct publisher OA link.
+
+**Helper:** `scripts/fetch_open_fulltext.py <DOI> [--json]` runs sources 1–7
+uniformly and prints the first URL that actually returns a PDF (`%PDF` /
+`application/pdf`); `--json` reports every source it tried and why. Standard
+library only — no third-party dependencies — so it runs anywhere Python 3 does.
+
+**Configuration (graceful degradation).** Config is read from the environment
+or the untracked file `~/.config/bookends-research/oa-fulltext.env`
+(KEY=VALUE lines, so no secret is committed): `UNPAYWALL_EMAIL` (alias
+`OA_EMAIL`) enables Unpaywall; `CORE_API_KEY` enables CORE. **If an email/key is
+unset, that one source is skipped and the sweep continues** — nothing
+hard-fails on missing config.
+
+**NEVER Sci-Hub or any pirated mirror.** Sci-Hub, LibGen and other
+shadow-library domains are **never queried** and are blocked in the helper
+(`PIRATE_BLOCKLIST`); any candidate URL that resolves onto such a domain is
+discarded. Only legitimate open-access sources are used.
+
+**Honesty about coverage.** Many paywalled titles simply have **no legitimate
+open-access copy.** When the whole sweep comes up empty, the **abstract-card
+fallback remains** (render the citation + abstract to a one-page PDF, attach it,
+and flag the entry abstract-only). That outcome is expected for genuinely
+paywalled work, not a failure of the pipeline.
 
 ## Credits
 
