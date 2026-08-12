@@ -1,0 +1,180 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  ============================================================================
+  ANNOTATED EVIDENCE BIBLIOGRAPHY — REUSABLE TEMPLATE
+  ============================================================================
+  Standard output format for the bookends-research-skill "annotated
+  bibliography / deposition cross-examination quick-reference" deliverable.
+
+  This is a DE-IDENTIFIED SCAFFOLD. It contains ZERO patient/case data. Every
+  case-specific value is a {{PLACEHOLDER}}. Fill placeholders programmatically
+  or by hand; DELETE the illustrative comment blocks in the final report if you
+  want a clean file (they are here only to explain each region).
+
+  ENCODING RULES (keep the report portable and paste-safe):
+    * Keep <meta charset="utf-8"> as the first element in <head>.
+    * Use NUMERIC HTML entities for any non-ASCII glyph:
+        em dash    &#8212;   (—)      middle dot &#183;   (·)
+        left/right &#8220; &#8221;    ( " " )   apostrophe &#8217; ( ' )
+        en dash    &#8211;   (–)      non-brk sp &#160;   ( )
+      Do NOT paste raw smart quotes / dashes and do NOT leave stray "{{" or "}}"
+      tokens in the shipped file. Run validate_encoding.py before delivery.
+
+  PLACEHOLDER INDEX (what to fill):
+    Document header
+      {{REPORT_TITLE}}            headline (e.g. matter/report short name)
+      {{SUBTITLE}}               one-line descriptor of the deliverable
+      {{COMPANION_LINE}}         "Companion to <i>…</i> (author) · prepared DATE"
+      {{PREPARED_DATE}}          ISO date the report was generated (YYYY-MM-DD)
+    Provenance meta box
+      {{DT_GROUP_LINK}}          x-devonthink-item:// href to the case group
+      {{DT_GROUP_LABEL}}         display text for that group
+      {{BOOKENDS_FOLDER_LINK}}   bookends:// href to the Reports/parent group
+      {{BOOKENDS_FOLDER_LABEL}}  display text for that folder
+      {{BOOKENDS_LIBRARY}}       Bookends library name (e.g. Library1)
+      {{EVIDENCE_BASE_SUMMARY}}  "N references … across M themes · X full-text, Y abstract-card"
+    Top-of-document INDEX (one row per theme/argument)
+      {{THEME_ID}}               anchor id fragment, e.g. A  -> href="#arg-A"
+      {{THEME_HEADING_SHORT}}    short label shown in the index row
+      {{THEME_SOURCE_COUNT}}     integer source count for that theme
+      {{TOTAL_SOURCES}}          grand total across all themes
+    Per-theme section
+      {{ARGUMENT_OR_THEME_HEADING}}  full heading text for the theme/argument
+      {{THEME_INTRO}}            one-line framing / deposition point (italic)
+    Per-entry block (repeat inside each theme)
+      {{REFNUM}}                 running citation number, e.g. 1
+      {{CITATION}}              authors + title + journal/year (see sub-fields)
+        {{CITATION_AUTHORS}}     "Author AB, Author CD."
+        {{CITATION_TITLE}}       article title (goes inside bold web link)
+        {{CITATION_WEB_URL}}     DOI or PubMed URL for the title link
+        {{CITATION_SOURCE}}      "Journal. Year;Vol(Iss):Pages."
+      {{STANCE_TAG}}             stance pill label (see STANCE VALUES below)
+      {{STANCE_COLOR}}           pill background hex (paired with the label)
+      {{TIER_TAG}}               evidence-tier marker; emit the <span class="abstag">
+                                 ONLY for abstract-only sources, omit for full-text
+      {{HIGHLIGHTED_QUOTE}}      verbatim quoted passage (bolded, deep-linked)
+      {{QUOTE_DEEPLINK}}         bookends:// annotation deep link to the highlight
+      {{SUPPORT_NOTE}}           one-line note: how the quote supports the theme
+      {{BOOKENDS_GROUP_LINK}}    bookends:// group href (sibling sources)
+      {{BOOKENDS_GROUP_LABEL}}   display text for the group link
+      {{BOOKENDS_CITATION_LINK}} bookends:// annotation href (this exact ref/PDF)
+    Vancouver reference appendix (one <li> per source, numbered to match [REFNUM])
+      {{VANCOUVER_CITATION}}     full Vancouver-style reference text
+      {{VANCOUVER_WEB_URL}}      DOI/PubMed URL for the [web] link
+      (reuses {{BOOKENDS_GROUP_LINK}} and {{BOOKENDS_CITATION_LINK}})
+    Footer
+      {{FOOTER_NOTE}}            work-product / disclaimer line
+
+  STANCE VALUES (pill label -> background color). Extend as needed; keep label
+  text and the matching .note bold label identical:
+      Supportive  -> #1b7a3d   (green — source supports the theme)
+      Context     -> #3a5a8c   (blue — background/context, not directly on point)
+      Equivocal   -> #9a6a00   (amber — mixed / partially supportive)
+      Contrary    -> #7a1f2b   (dark red — cuts against the theme; label honestly)
+
+  CONVENTIONS THIS TEMPLATE ENCODES:
+    1. INDEX at the top: every theme/argument -> its source count, anchor-linked.
+    2. Organized BY THEME/ARGUMENT, not by author or date.
+    3. Per-entry layout: citation (numbered, web-linked title) + a BOLDED,
+       deep-linked verbatim quote + a one-line support note + DUAL Bookends
+       links (group link + exact-citation link) + stance & evidence-tier tags.
+    4. Vancouver reference appendix at the end, numbered to match the entries.
+  ============================================================================
+-->
+<title>{{REPORT_TITLE}} &#8212; Annotated Evidence Bibliography (AI)</title>
+<style>
+:root{--ink:#1a1a1a;--mut:#555;--line:#d9d9d9;--hi:#fff3b0;--acc:#7a1f2b;--bg:#fff;}
+*{box-sizing:border-box}
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);max-width:960px;margin:0 auto;padding:26px 20px 80px;line-height:1.5;background:var(--bg)}
+h1{font-size:25px;margin:0 0 4px}
+h2{font-size:20px;margin:34px 0 6px;padding-top:10px;border-top:3px solid var(--acc)}
+.sub{color:var(--mut);font-size:13.5px;margin:2px 0}
+.meta{background:#faf6f2;border:1px solid var(--line);border-radius:8px;padding:12px 15px;margin:16px 0;font-size:13.5px}
+.meta a{color:var(--acc);font-weight:700}
+.callout{background:#eef4fb;border:1px solid #cfe0f2;border-radius:8px;padding:11px 14px;font-size:12.8px;margin:14px 0;color:#213}
+.index{border:1px solid var(--line);border-radius:8px;padding:8px 6px;margin:16px 0}
+.index table{width:100%;border-collapse:collapse;font-size:14px}
+.index td{padding:5px 9px;border-bottom:1px solid #eee}
+.index td.c{text-align:center;font-weight:700;width:64px}
+.index a{color:var(--acc);text-decoration:none;font-weight:600}
+.argintro{color:var(--mut);font-size:13.5px;margin:2px 0 12px;font-style:italic}
+.ref{border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:7px;padding:11px 14px;margin:11px 0;background:#fff}
+.ref .cite{font-size:13.6px}
+.ref .cite a{color:#0b3d91;font-weight:700;text-decoration:none}
+.quote{display:block;background:var(--hi);border-radius:5px;padding:8px 11px;margin:8px 0;font-size:14.5px}
+.quote a{color:#111;font-weight:800;text-decoration:none}
+.note{font-size:12.8px;color:var(--mut);margin:5px 0 6px}
+.belinks{font-size:12.6px;margin-top:5px}
+.belinks a{font-weight:700;text-decoration:underline}
+.be-group{color:#7a1f2b}
+.be-cite{color:#0b6b53}
+.pill{color:#fff;font-size:11px;font-weight:700;border-radius:10px;padding:1px 9px;margin-left:6px;vertical-align:middle}
+.abstag{font-size:10.5px;color:#8a5a00;border:1px solid #e0c07a;border-radius:9px;padding:0 6px;margin-left:6px}
+.refnum{color:var(--mut);font-weight:700;margin-right:6px}
+ol.vanc{font-size:12.6px;color:#222}
+ol.vanc li{margin:6px 0}
+ol.vanc a{color:#0b3d91;text-decoration:none;font-weight:600}
+.footer{margin-top:40px;border-top:1px solid var(--line);padding-top:12px;color:var(--mut);font-size:11.6px}
+</style></head><body>
+
+<!-- ===== DOCUMENT HEADER =================================================== -->
+<h1>{{REPORT_TITLE}}</h1>
+<div class="sub"><b>{{SUBTITLE}}</b></div>
+<div class="sub">{{COMPANION_LINE}}</div>
+
+<!-- ===== PROVENANCE META BOX ============================================== -->
+<!-- Where the sources live. DEVONthink group link + Bookends folder/library. -->
+<div class="meta">
+<b>Source DEVONthink group:</b> <a href="{{DT_GROUP_LINK}}">{{DT_GROUP_LABEL}}</a><br>
+<b>Bookends folder:</b> <a href="{{BOOKENDS_FOLDER_LINK}}">{{BOOKENDS_FOLDER_LABEL}}</a><br>
+<b>Bookends library:</b> <code>{{BOOKENDS_LIBRARY}}</code> &#8212; every <code>bookends://</code> link below resolves in this library and requires it to be open.<br>
+<b>Evidence base:</b> {{EVIDENCE_BASE_SUMMARY}}
+</div>
+
+<!-- ===== HOW-TO CALLOUT (static help text; safe to keep verbatim) ========= -->
+<div class="callout"><b>How to open the deep links.</b> Each bolded quote is a native <code>bookends://</code> link that opens the source PDF <b>at the highlighted passage</b> inside Bookends (library <code>{{BOOKENDS_LIBRARY}}</code> must be open). The two per-source links are the <b>group name</b> link (lands among that theme&#8217;s sibling sources) and <b>Bookends Citation</b> (opens that exact reference/PDF). The citation title links to the article on the web (DOI/PubMed). If a link looks dead, confirm <code>{{BOOKENDS_LIBRARY}}</code> is open in Bookends.</div>
+
+<!-- ===== TOP-OF-DOCUMENT INDEX =========================================== -->
+<!-- One <tr> per theme/argument: label (anchor to #arg-{{THEME_ID}}) + count. -->
+<!-- REPEAT the middle <tr> for every theme; the last <tr> is the Total row.  -->
+<div class="index"><table>
+<tr><td><b>Theme / argument</b></td><td class="c"><b>Sources</b></td></tr>
+<!-- BEGIN index row (repeat) -->
+<tr><td><a href="#arg-{{THEME_ID}}">{{THEME_HEADING_SHORT}}</a></td><td class="c">{{THEME_SOURCE_COUNT}}</td></tr>
+<!-- END index row -->
+<tr><td style="text-align:right"><b>Total</b></td><td class="c">{{TOTAL_SOURCES}}</td></tr>
+</table></div>
+
+<!-- ===================================================================== -->
+<!-- ===== THEME SECTION (repeat this whole block for each theme) ========= -->
+<!-- ===================================================================== -->
+<h2 id="arg-{{THEME_ID}}">{{ARGUMENT_OR_THEME_HEADING}} <span style="font-size:13px;color:#888;font-weight:400">({{THEME_SOURCE_COUNT}} sources)</span></h2>
+<div class="argintro">{{THEME_INTRO}}</div>
+
+<!-- ----- ENTRY (repeat this .ref block for each source in the theme) ----- -->
+<div class="ref">
+<div class="cite"><span class="refnum">[{{REFNUM}}]</span>{{CITATION_AUTHORS}} <b><a href="{{CITATION_WEB_URL}}">{{CITATION_TITLE}}</a></b>. {{CITATION_SOURCE}}<span class="pill" style="background:{{STANCE_COLOR}}">{{STANCE_TAG}}</span><!-- TIER: include the next span ONLY for abstract-only sources; omit for full-text --><span class="abstag">{{TIER_TAG}}</span></div>
+<span class="quote">&#8220;<a href="{{QUOTE_DEEPLINK}}">{{HIGHLIGHTED_QUOTE}}</a>&#8221;</span>
+<div class="note"><b>{{STANCE_TAG}}.</b> {{SUPPORT_NOTE}}</div>
+<div class="belinks"><span class="be-group">Bookends Group:</span> <a class="be-group" href="{{BOOKENDS_GROUP_LINK}}">{{BOOKENDS_GROUP_LABEL}}</a> &#183; <a class="be-cite" href="{{BOOKENDS_CITATION_LINK}}">Bookends Citation</a></div>
+</div>
+<!-- ----- END ENTRY ----- -->
+
+<!-- ===================================================================== -->
+<!-- ===== END THEME SECTION ============================================= -->
+<!-- ===================================================================== -->
+
+<!-- ===== VANCOUVER REFERENCE APPENDIX ==================================== -->
+<!-- Flat numbered list; value="N" matches the [REFNUM] used above.          -->
+<!-- Each li: full citation + [web] link + dual Bookends links.              -->
+<h2 id="refs">References (Vancouver)</h2>
+<ol class="vanc">
+<!-- BEGIN vancouver item (repeat) -->
+<li value="{{REFNUM}}">{{VANCOUVER_CITATION}} <a href="{{VANCOUVER_WEB_URL}}">[web]</a> &#183; <a href="{{BOOKENDS_GROUP_LINK}}">{{BOOKENDS_GROUP_LABEL}}</a> &#183; <a href="{{BOOKENDS_CITATION_LINK}}">Bookends Citation</a></li>
+<!-- END vancouver item -->
+</ol>
+
+<!-- ===== FOOTER ========================================================== -->
+<div class="footer">{{FOOTER_NOTE}}</div>
+</body></html>

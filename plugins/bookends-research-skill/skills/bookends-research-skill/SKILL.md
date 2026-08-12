@@ -1275,8 +1275,65 @@ public-literature run ("Is Surgery Effective for Low Back Pain?") with no PHI.
   formatting via `bookends_get_formatted_reference`, the AppleScript-bridge
   `volume`/parentheses workaround, group global-unique-name handling, and the label-AI /
   never-trash rules.
+- `templates/annotated-bibliography-template.html` — the de-identified, canonical layout for the **annotated evidence bibliography** / deposition cross-examination quick-reference deliverable (top-of-document index, by-theme sections, per-entry dual Bookends links + stance/tier tags, Vancouver appendix). See R-BOOKENDS-ANNOTATED-BIB-TEMPLATE-01.
 
 ---
+
+## Standard annotated-bibliography output format (R-BOOKENDS-ANNOTATED-BIB-TEMPLATE-01)
+
+When the requested deliverable is an **annotated evidence bibliography** —
+the "deposition cross-examination quick-reference" companion that organizes
+sources **by theme/argument** rather than as a running narrative — the
+**standard, canonical layout is `templates/annotated-bibliography-template.html`.**
+Start from that file; do not hand-roll a different structure. It is a
+de-identified scaffold (zero patient/case data) whose CSS and markup reproduce
+the house format exactly.
+
+**Fill the `{{PLACEHOLDER}}` fields** (all documented in the template's opening
+HTML comment). The key ones:
+
+- Header: `{{REPORT_TITLE}}`, `{{SUBTITLE}}`, `{{COMPANION_LINE}}`, `{{PREPARED_DATE}}`.
+- Provenance meta box: `{{DT_GROUP_LINK}}`/`{{DT_GROUP_LABEL}}`,
+  `{{BOOKENDS_FOLDER_LINK}}`/`{{BOOKENDS_FOLDER_LABEL}}`, `{{BOOKENDS_LIBRARY}}`,
+  `{{EVIDENCE_BASE_SUMMARY}}`.
+- Per theme: `{{THEME_ID}}` (anchor fragment → `#arg-<id>`),
+  `{{ARGUMENT_OR_THEME_HEADING}}`, `{{THEME_HEADING_SHORT}}` (index row),
+  `{{THEME_SOURCE_COUNT}}`, `{{THEME_INTRO}}`.
+- Per entry: `{{REFNUM}}`, `{{CITATION}}` (built from `{{CITATION_AUTHORS}}`,
+  `{{CITATION_TITLE}}`, `{{CITATION_WEB_URL}}`, `{{CITATION_SOURCE}}`),
+  `{{HIGHLIGHTED_QUOTE}}` + `{{QUOTE_DEEPLINK}}`, `{{SUPPORT_NOTE}}`,
+  `{{STANCE_TAG}}` + `{{STANCE_COLOR}}`, `{{TIER_TAG}}`,
+  `{{BOOKENDS_GROUP_LINK}}`/`{{BOOKENDS_GROUP_LABEL}}`, `{{BOOKENDS_CITATION_LINK}}`.
+- Appendix: `{{VANCOUVER_CITATION}}`, `{{VANCOUVER_WEB_URL}}`, `{{TOTAL_SOURCES}}`.
+- Footer: `{{FOOTER_NOTE}}`.
+
+**Conventions the template encodes** (keep all of them):
+
+1. **Top-of-document INDEX** — a table mapping every theme/argument to its
+   source count, each row anchor-linked to its `#arg-<id>` section.
+2. **Organized by theme/argument**, not by author or date; each `<h2>` section
+   opens with a one-line `.argintro` framing (the deposition point).
+3. **Per-entry layout** — numbered citation with a web-linked (DOI/PubMed)
+   bold title, then a **bolded, deep-linked verbatim quote** (the `bookends://`
+   annotation link), a one-line support note, the **dual Bookends links**
+   (group link + exact `Bookends Citation` link — R-BOOKENDS-DUAL-LINK-01), and
+   **stance + evidence-tier tags** (the `.pill` stance and the `.abstag`
+   full-text/abstract marker).
+4. **Stance pill values → color:** Supportive `#1b7a3d`, Context `#3a5a8c`,
+   Equivocal `#9a6a00`, Contrary `#7a1f2b`. Keep the `.pill` label and the
+   `.note` bold label identical, and label stance honestly.
+5. **Evidence tier:** emit `<span class="abstag">abstract</span>` **only** for
+   abstract-only sources; omit it for full-text.
+6. **Vancouver reference appendix** at the end, `value="N"` numbered to match
+   the `[REFNUM]` used in the entries, each carrying the `[web]` link plus the
+   dual Bookends links.
+
+**Encoding-hardened, PHI-free.** Keep `<meta charset="utf-8">` first, use
+**numeric HTML entities** for every non-ASCII glyph (`&#8212;` — , `&#183;` · ,
+`&#8220;`/`&#8221;` " " , `&#8217;` ' ), leave no stray `{{`/`}}` tokens in the
+shipped file, and run `scripts/validate_encoding.py` before delivery. The
+template ships with **zero** patient/case content; never commit a filled-in
+(PHI-bearing) copy back into the skill.
 
 ## Credits
 
