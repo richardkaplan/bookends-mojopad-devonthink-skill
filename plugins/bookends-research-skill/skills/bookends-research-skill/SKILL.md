@@ -1266,6 +1266,8 @@ per-article card with an inline highlighted, deep-linked quote (`03-article-card
 and the Vancouver References list (`04-references.png`). The example is a
 public-literature run ("Is Surgery Effective for Low Back Pain?") with no PHI.
 
+For a **full, self-contained specimen** of a finished report, see **`examples/example-deep-linked-report.html`** — an **anonymized, zero-PHI** life-expectancy deep-linked report (Marjolin-ulcer / burn-chemical cancer risk). It is the outstanding reference model for the **deep-linked research-report format**, distinct from the annotated-bibliography template in `templates/` (R-BOOKENDS-ANNOTATED-BIB-TEMPLATE-01), and it exemplifies every element this skill produces: an executive summary; a stance / evidence source-type table; per-article cards each carrying a highlighted, deep-linked verbatim quote; a navigable Part II scholarly synthesis whose author-date citations are themselves live deep links; a Word-ready Academic Summary; a Vancouver References list; the **dual Bookends links** (group + citation) on every source; and transparent **SSA cohort-baseline life-expectancy reasoning** (baseline → layered, labeled hazard adjustments → central estimate + defensible range). It is a **de-identified illustrative example**: every patient/case identifier — name, date of birth, dates of injury, case caption, court/venue, employer and party names, the DEVONthink group UUID, and the Bookends library name and reference IDs — has been removed or generalized (the library is shown as `ExampleLibrary` and the reference IDs zeroed), while the published medical literature and the analytical structure are retained unchanged.
+
 ---
 
 ## Reference file
