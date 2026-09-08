@@ -4,12 +4,12 @@
     "name": "Richard S. Kaplan, MD",
     "email": "rkaplan@kaplanlifecareplan.com"
   },
-  "description": "Single-plugin marketplace distributing the Bookends Research Skill: a Bookends-native, deep-linked, highlighted research report on any topic. Add this marketplace by its GitHub URL, then install the bookends-research-skill plugin.",
+  "description": "Single-plugin marketplace distributing the Bookends Research Skill: a Bookends-native, deep-linked, highlighted research report on any topic. Add this marketplace by its GitHub URL, then install the bookends-research-skill plugin. The plugin bundles three skills: the Bookends Research Skill plus sibling mojopad-research-report and devonthink-research-report reports.",
   "plugins": [
     {
       "name": "bookends-research-skill",
       "source": "./plugins/bookends-research-skill",
-      "description": "Produce a Bookends-native, deep-linked, highlighted research report on any topic. Creates a Bookends group with subtopic child groups plus a Reports folder, retrieves sources (guidelines, systematic reviews, key studies) Bookends-first, attaches full-text PDFs, writes one persistent highlight and page-accurate bookends:// deep link per source, and assembles ONE combined HTML report (highlighted deep-linked quotes, stance table, narrative synthesis, Vancouver references).",
+      "description": "Produce a Bookends-native, deep-linked, highlighted research report on any topic. Creates a Bookends group with subtopic child groups plus a Reports folder, retrieves sources (guidelines, systematic reviews, key studies) Bookends-first, attaches full-text PDFs, writes one persistent highlight and page-accurate bookends:// deep link per source, and assembles ONE combined HTML report (highlighted deep-linked quotes, stance table, narrative synthesis, Vancouver references). This plugin now also bundles two sibling deep-linked research-report skills: mojopad-research-report (a deep-linked research report delivered as a MojoPad .mojopad wiki) and devonthink-research-report (a deep-linked research report delivered as a DEVONthink-stored combined HTML report).",
       "author": {
         "name": "Richard S. Kaplan, MD",
         "email": "rkaplan@kaplanlifecareplan.com"

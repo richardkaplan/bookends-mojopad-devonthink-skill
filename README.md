@@ -22,6 +22,29 @@ macOS only. Requires Bookends, a paid Mac app. See [Requirements](#requirements)
 
 ---
 
+## Three skills in this plugin
+
+This plugin bundles **three sibling deep-linked research-report skills**, all built on the
+same evidence-trail idea — find the literature, attach/import the full-text PDFs, highlight
+the key passage, and assemble a report whose every quote deep-links to the exact source page:
+
+- **bookends-research-skill** — the original: builds the report inside a **Bookends** library,
+  with `bookends://` deep links to highlighted passages in the attached PDFs. Documented in
+  full below.
+- **mojopad-research-report** — delivers the report as a navigable **MojoPad** (`.mojopad`)
+  wiki, retrieving full-text PDFs into the wiki's PDF Library and deep-linking every quote to
+  the PDF inside MojoPad. Invoke with *"Mojopad Report"* / *"Mojopad Research Report"*.
+- **devonthink-research-report** — delivers the report as ONE combined HTML file saved into a
+  **DEVONthink** group, with persistent highlights and page-accurate `x-devonthink-item://`
+  deep links to the imported PDFs. Invoke with *"Devonthink Report"* / *"Devonthink Research
+  Report"*.
+
+Each skill has its own `SKILL.md` under `plugins/bookends-research-skill/skills/`. The rest of
+this README documents the Bookends skill in detail; the two sibling skills follow the same
+pipeline against their respective apps.
+
+---
+
 ## What a run produces
 
 One combined, styled HTML report, saved into Bookends (as a linked PDF) and to a folder on
@@ -503,7 +526,7 @@ bookends-research-skill/                        # the repo = a Claude plugin mar
 │       ├── .claude-plugin/
 │       │   └── plugin.json                     # plugin manifest
 │       └── skills/
-│           └── bookends-research-skill/        # the skill
+│           ├── bookends-research-skill/        # the Bookends skill (documented here)
 │               ├── SKILL.md                    # the pipeline (topic = the only variable)
 │               ├── references/bookends.md      # Bookends calls, link forms, Vancouver style
 │               ├── scripts/
@@ -514,6 +537,8 @@ bookends-research-skill/                        # the repo = a Claude plugin mar
 │               │   ├── publish_to_web_share.py
 │               │   └── styled_links_to_clipboard.sh
 │               └── LICENSE
+│           ├── mojopad-research-report/        # sibling skill: MojoPad .mojopad wiki report
+│           └── devonthink-research-report/     # sibling skill: DEVONthink-stored HTML report
 ├── scripts/
 │   └── set-firecrawl-key.sh                    # one-step Firecrawl API-key setup helper
 ├── .env.example                                # env template (FIRECRAWL_API_KEY)

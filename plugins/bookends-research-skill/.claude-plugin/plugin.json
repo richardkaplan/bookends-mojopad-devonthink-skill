@@ -1,7 +1,7 @@
 {
   "name": "bookends-research-skill",
-  "version": "0.3.0",
-  "description": "Bookends Research Skill \u2014 a deep-linked, highlighted research report on any topic. Creates a Bookends group with topic-appropriate subtopic child groups, finds authoritative sources (guidelines, systematic reviews, key studies), attaches full-text PDFs to Bookends references, writes one persistent highlight and a page-accurate bookends:// deep link per source, and assembles ONE combined styled HTML report (executive summary; per-article cards with inline highlighted, deep-linked quotes; stance/source-type table; navigable narrative synthesis; Word-ready Academic Summary; References in Vancouver style). Saved into Bookends (Reports subgroup) and to disk.",
+  "version": "0.4.0",
+  "description": "Bookends Research Skill — a deep-linked, highlighted research report on any topic. Creates a Bookends group with topic-appropriate subtopic child groups, finds authoritative sources (guidelines, systematic reviews, key studies), attaches full-text PDFs to Bookends references, writes one persistent highlight and a page-accurate bookends:// deep link per source, and assembles ONE combined styled HTML report (executive summary; per-article cards with inline highlighted, deep-linked quotes; stance/source-type table; navigable narrative synthesis; Word-ready Academic Summary; References in Vancouver style). Saved into Bookends (Reports subgroup) and to disk. This plugin now also bundles two sibling deep-linked research-report skills: mojopad-research-report (a deep-linked research report delivered as a MojoPad .mojopad wiki) and devonthink-research-report (a deep-linked research report delivered as a DEVONthink-stored combined HTML report).",
   "author": {
     "name": "Richard S. Kaplan, MD",
     "email": "rkaplan@kaplanlifecareplan.com"
