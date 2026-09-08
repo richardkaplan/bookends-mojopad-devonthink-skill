@@ -1,8 +1,21 @@
-# Bookends Research Skill
+# Bookends / MojoPad / DEVONthink Research Skill
 
-**You ask a research question. You get back a report in which every quotation is a link
-that opens the source PDF in Bookends, scrolled to the exact sentence — already
-highlighted.**
+**One research skill, three destinations.** You ask a research question; you get back a
+deep-linked, highlighted evidence report — and you choose *where it lives*: inside your
+**Bookends** library, as a navigable **MojoPad** wiki, or as an HTML report filed into
+**DEVONthink**. Whichever mode you pick, every quotation is a link that opens the source
+PDF at the exact sentence, already highlighted.
+
+Same pipeline in every mode — find the literature, retrieve and attach the full-text
+PDFs, highlight the key passage, and assemble a report whose every quote deep-links to the
+exact source page. The modes differ only in the app they build into and the deep-link
+scheme they use:
+
+| Mode | Invoke with | Builds into | Deep-link scheme |
+|------|-------------|-------------|------------------|
+| **Bookends** (default) | *"Bookends Research Skill"* | a Bookends library group | `bookends://` |
+| **MojoPad** | *"Mojopad Report"* | a `.mojopad` wiki | `mojopad://` |
+| **DEVONthink** | *"Devonthink Report"* | a DEVONthink group | `x-devonthink-item://` |
 
 This is a *skill* for Claude — an add-on that teaches Claude a specific job. This one's job
 is to research a topic and build the evidence trail inside your
@@ -22,11 +35,13 @@ macOS only. Requires Bookends, a paid Mac app. See [Requirements](#requirements)
 
 ---
 
-## Three skills in this plugin
+## The three modes in detail
 
-This plugin bundles **three sibling deep-linked research-report skills**, all built on the
-same evidence-trail idea — find the literature, attach/import the full-text PDFs, highlight
-the key passage, and assemble a report whose every quote deep-links to the exact source page:
+This repository is one deep-linked research-report skill with **three interchangeable
+modes / roles**, all built on the same evidence-trail idea — find the literature,
+attach/import the full-text PDFs, highlight the key passage, and assemble a report whose
+every quote deep-links to the exact source page. You pick the mode by how you invoke it;
+each mode is a self-contained skill under `plugins/bookends-research-skill/skills/`:
 
 - **bookends-research-skill** — the original: builds the report inside a **Bookends** library,
   with `bookends://` deep links to highlighted passages in the attached PDFs. Documented in
@@ -196,7 +211,7 @@ Claude Code has the plugin-marketplace commands. This installs the **whole** plu
 plus the optional QA scripts and reference doc. Run:
 
 ```
-/plugin marketplace add richardkaplan/bookends-research-skill
+/plugin marketplace add richardkaplan/bookends-mojopad-devonthink-skill
 /plugin install bookends-research-skill@bookends-research
 ```
 
@@ -204,7 +219,7 @@ Two names are involved, and they are **different**: `marketplace add` registers 
 **marketplace** named `bookends-research` (that name comes from the repo's `marketplace.json`,
 not the repo name), and inside it is a **plugin** named `bookends-research-skill`. That is why
 the install target is `bookends-research-skill@bookends-research`. `marketplace add` also
-accepts the full URL (`https://github.com/richardkaplan/bookends-research-skill`) instead of
+accepts the full URL (`https://github.com/richardkaplan/bookends-mojopad-devonthink-skill`) instead of
 the `owner/repo` shorthand. Once the marketplace is added, the shorter
 `/plugin install bookends-research-skill` works too, since the plugin name is unambiguous.
 Restart Claude Code and the skill loads as **bookends-research-skill**.
@@ -216,7 +231,7 @@ feature. Install by pasting this:
 
 ```
 Install the Bookends Research Skill from this public repo:
-https://github.com/richardkaplan/bookends-research-skill
+https://github.com/richardkaplan/bookends-mojopad-devonthink-skill
 
 Fetch the repo and save its skill — the SKILL.md at
 plugins/bookends-research-skill/skills/bookends-research-skill/SKILL.md — as an installed skill.
@@ -518,7 +533,7 @@ This repo is a single-plugin **marketplace**: a marketplace manifest at the root
 one plugin, and that plugin contains the skill.
 
 ```
-bookends-research-skill/                        # the repo = a Claude plugin marketplace
+bookends-mojopad-devonthink-skill/              # the repo = a Claude plugin marketplace
 ├── .claude-plugin/
 │   └── marketplace.json                        # marketplace manifest (lists the plugin)
 ├── plugins/
