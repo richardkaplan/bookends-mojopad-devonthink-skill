@@ -1,3 +1,13 @@
+> ⚠️ **DEPRECATED — superseded by [richardkaplan/research-report-skill](https://github.com/richardkaplan/research-report-skill) (combined Bookends/MojoPad/DEVONthink Research Report skill).**
+>
+> This repository's three skills — `bookends-research-skill`, `mojopad-research-report`, and
+> `devonthink-research-report` — have been merged into a **single `research-report` skill with
+> three output modes** (Bookends / MojoPad / DEVONthink), distributed from
+> **richardkaplan/research-report-skill** and installed via the `kaplan-research-skills` plugin.
+> This repo is archived (read-only) and kept for history only. Do not install from here.
+
+---
+
 # Bookends / MojoPad / DEVONthink Research Skill
 
 **One research skill, three destinations.** You ask a research question; you get back a
